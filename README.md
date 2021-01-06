@@ -15,7 +15,7 @@ The JAR files and natives for these libraries are already provided under `lib`. 
 
 First, run `src/server/PositionServer.java` to start the server. You can then run `src/main/Main.java` any number of times for spawning clients to join the server. If you're joining the server from a different computer, be sure to update the IP and port number of the server under `src/main/Main.java` correspondingly.
 
-The end results should be something like follows:
+The client-side should display something like follows:
 
 <!-- <figure class="video_container" align="center">
   <video controls="true" width="700" allowfullscreen="true">
