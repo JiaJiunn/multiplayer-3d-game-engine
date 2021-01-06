@@ -33,7 +33,7 @@ public class Main {
 	
 	public static GameClient client;
 	
-	public static Integer clientId = 1;
+	public static Integer clientId = 0;
 	public static String ipString = "127.0.0.1";
 	public static Integer portNumber = 8888;
 	
