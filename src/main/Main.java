@@ -1,8 +1,11 @@
 package main;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -16,16 +19,23 @@ import loaders.Loader;
 import loaders.OBJLoader;
 import models.TexturedModel;
 import renderers.MasterRenderer;
+import socket.GameClient;
 import renderers.DisplayManager;
 import textures.ModelTexture;
 import textures.TerrainTexture;
 import textures.TerrainTexturePack;
 
 public class Main {
+	
+	public static Integer currSpeed;
+	public static Integer currTurnSpeed;
+	public static Integer isJump;
+	
+	public static GameClient client;
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws ClassNotFoundException, IOException {
 		
-DisplayManager.createDisplay();
+		DisplayManager.createDisplay();
 		
 		Loader loader = new Loader();
 		
@@ -51,9 +61,9 @@ DisplayManager.createDisplay();
 		Camera camera = new Camera(player);
 		
 		// test player 2
-		List<Entity> entities = new ArrayList<Entity>();
-		TexturedModel player2Texture = new TexturedModel(OBJLoader.loadObjModel("player",  loader), new ModelTexture(loader.loadTexture("playerTexture")));
-		Player2 player2 = new Player2(player2Texture, new Vector3f(300,0,-400), 0, 180, 0, 1);
+//		List<Entity> entities = new ArrayList<Entity>();
+//		TexturedModel player2Texture = new TexturedModel(OBJLoader.loadObjModel("player",  loader), new ModelTexture(loader.loadTexture("playerTexture")));
+//		Player2 player2 = new Player2(player2Texture, new Vector3f(300,0,-400), 0, 180, 0, 1);
 		
 		MasterRenderer renderer = new MasterRenderer(loader);
 		
@@ -61,6 +71,18 @@ DisplayManager.createDisplay();
 		float timeDelay = 100;
 		while(!Display.isCloseRequested()) {
 			camera.move();
+			
+			// added
+			HashMap<Integer, Integer[]> player_pos_hmap = checkMove();
+			Integer[] player_pos = player_pos_hmap.get(0);
+//			System.out.println("receiving:");
+//			System.out.println(player_pos[0]);
+//			System.out.println(player_pos[1]);
+//			System.out.println(player_pos[2]);
+			player.setCurrentSpeed(player_pos[0]);
+			player.setCurrentTurnSpeed(player_pos[1]);
+			player.setJump(player_pos[2]);
+			
 			player.move(terrain);
 //			player2.move(terrain);
 			
@@ -70,7 +92,7 @@ DisplayManager.createDisplay();
 			sun.setColour(new Vector3f(sunIntensity, sunIntensity, sunIntensity));
 			
 			renderer.processEntity(player);
-			renderer.processEntity(player2);
+//			renderer.processEnstity(player2);
 			renderer.processTerrain(terrain);
 			renderer.render(lights, camera);
 			
@@ -82,6 +104,42 @@ DisplayManager.createDisplay();
 		
 		DisplayManager.closeDisplay();
 
+	}
+	
+	public static HashMap<Integer, Integer[]> checkMove() throws ClassNotFoundException, IOException {
+		if (Keyboard.isKeyDown(Keyboard.KEY_W) || Keyboard.isKeyDown(Keyboard.KEY_UP)) {
+			currSpeed = 1;
+		} else if (Keyboard.isKeyDown(Keyboard.KEY_S) || Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {
+			currSpeed = -1;
+		} else {
+			currSpeed = 0;
+		}
+		
+		if (Keyboard.isKeyDown(Keyboard.KEY_D) || Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) {
+			currTurnSpeed = -1;
+		} else if (Keyboard.isKeyDown(Keyboard.KEY_A) || Keyboard.isKeyDown(Keyboard.KEY_LEFT)) {
+			currTurnSpeed = 1;
+		} else {
+			currTurnSpeed = 0;
+		}
+		
+		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
+			isJump = 1;
+		} else {
+			isJump = 0;
+		}	
+		
+		// server client stuff
+		client = new GameClient();
+		client.startConnection("127.0.0.1", 8888);
+		Integer[] controlsUpdate = {currSpeed, currTurnSpeed, isJump};
+//		System.out.println("sending:");
+//		System.out.println(controlsUpdate[0]);
+//		System.out.println(controlsUpdate[1]);
+//		System.out.println(controlsUpdate[2]);
+		HashMap<Integer, Integer[]> ret = client.sendMessage(0, controlsUpdate); 
+		client.stopConnection();
+		return ret;
 	}
 
 }

@@ -25,7 +25,7 @@ public class Player extends Entity {
 	}
 
 	public void move(Terrain terrain){
-		checkInputs();
+//		checkInputs();
 		super.increaseRotation(0, currentTurnSpeed * DisplayManager.getFrameTimeSeconds(), 0);
 		float distance = currentSpeed * DisplayManager.getFrameTimeSeconds();
 		float dx = (float) (distance * Math.sin(Math.toRadians(super.getRotY())));
@@ -90,5 +90,31 @@ public class Player extends Entity {
 			jump();
 		}
 		
+	}
+	
+	public void setCurrentSpeed(Integer i) {
+		if (i > 0) {
+			this.currentSpeed = RUN_SPEED;
+		} else if (i < 0) {
+			this.currentSpeed = -RUN_SPEED;
+		} else {
+			this.currentSpeed = 0;
+		}
+	}
+	
+	public void setCurrentTurnSpeed(Integer i) {
+		if (i > 0) {
+			this.currentTurnSpeed = TURN_SPEED;
+		} else if (i < 0) {
+			this.currentTurnSpeed = -TURN_SPEED;
+		} else {
+			this.currentTurnSpeed = 0;
+		}
+	}
+	
+	public void setJump(Integer i) {
+		if (i > 0) {
+			jump();
+		}
 	}
 }
