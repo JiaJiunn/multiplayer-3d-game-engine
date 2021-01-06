@@ -32,10 +32,17 @@ public class Main {
 	public static Integer isJump;
 	
 	public static GameClient client;
+	
+	public static Integer clientId = 1;
+	public static String ipString = "127.0.0.1";
+	public static Integer portNumber = 8888;
+	
+	public static HashMap<Integer, Player2> playerList = new HashMap<Integer, Player2>(); 
 
 	public static void main(String[] args) throws ClassNotFoundException, IOException {
 		
-		DisplayManager.createDisplay();
+		DisplayManager display = new DisplayManager();
+		display.createDisplay();
 		
 		Loader loader = new Loader();
 		
@@ -74,7 +81,7 @@ public class Main {
 			
 			// added
 			HashMap<Integer, Integer[]> player_pos_hmap = checkMove();
-			Integer[] player_pos = player_pos_hmap.get(0);
+			Integer[] player_pos = player_pos_hmap.get(clientId);
 //			System.out.println("receiving:");
 //			System.out.println(player_pos[0]);
 //			System.out.println(player_pos[1]);
@@ -83,26 +90,48 @@ public class Main {
 			player.setCurrentTurnSpeed(player_pos[1]);
 			player.setJump(player_pos[2]);
 			
-			player.move(terrain);
-//			player2.move(terrain);
+			for (Integer key : player_pos_hmap.keySet()) {
+				if (key != clientId) {
+					if (!playerList.containsKey(key)) {
+						TexturedModel player2Texture = new TexturedModel(OBJLoader.loadObjModel("player",  loader), new ModelTexture(loader.loadTexture("playerTexture")));
+						Player2 player2 = new Player2(player2Texture, new Vector3f(400,0,-400), 0, 180, 0, 1);
+						playerList.put(key, player2);
+					} else {
+						Player2 player2 = playerList.get(key);
+						Integer[] player2_pos = player_pos_hmap.get(key);
+						player2.setCurrentSpeed(player2_pos[0]);
+						player2.setCurrentTurnSpeed(player2_pos[1]);
+						player2.setJump(player2_pos[2]);
+					}
+				}
+            }
+			
+			player.move(terrain, display);
+			for (Integer key : playerList.keySet()) {
+				Player2 player2 = playerList.get(key);
+				player2.move(terrain, display);
+			}
 			
 			// TODO what
-			time += DisplayManager.getFrameTimeSeconds() * 1000;
-			sunIntensity = (float) ((float) (Math.sin(Math.toRadians(time/timeDelay))+1.0)/2.0);
+			time += display.getFrameTimeSeconds() * 1000;
+			sunIntensity = 0.99f; //(float) ((float) (Math.sin(Math.toRadians(time/timeDelay))+1.0)/2.0);
 			sun.setColour(new Vector3f(sunIntensity, sunIntensity, sunIntensity));
 			
 			renderer.processEntity(player);
-//			renderer.processEnstity(player2);
+			for (Integer key : playerList.keySet()) {
+				Player2 player2 = playerList.get(key);
+				renderer.processEntity(player2);
+			}
 			renderer.processTerrain(terrain);
 			renderer.render(lights, camera);
 			
-			DisplayManager.updateDisplay();
+			display.updateDisplay();
 		}
 		
 		renderer.cleanUp();
 		loader.cleanUp();
 		
-		DisplayManager.closeDisplay();
+		display.closeDisplay();
 
 	}
 	
@@ -131,13 +160,13 @@ public class Main {
 		
 		// server client stuff
 		client = new GameClient();
-		client.startConnection("127.0.0.1", 8888);
+		client.startConnection(ipString, portNumber);
 		Integer[] controlsUpdate = {currSpeed, currTurnSpeed, isJump};
 //		System.out.println("sending:");
 //		System.out.println(controlsUpdate[0]);
 //		System.out.println(controlsUpdate[1]);
 //		System.out.println(controlsUpdate[2]);
-		HashMap<Integer, Integer[]> ret = client.sendMessage(0, controlsUpdate); 
+		HashMap<Integer, Integer[]> ret = client.sendMessage(clientId, controlsUpdate); 
 		client.stopConnection();
 		return ret;
 	}
