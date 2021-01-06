@@ -17,11 +17,17 @@ First, run `src/server/PositionServer.java` to start the server. You can then ru
 
 The end results should be something like follows:
 
-<figure class="video_container" align="center">
+<!-- <figure class="video_container" align="center">
   <video controls="true" width="700" allowfullscreen="true">
     <source src="assets/AppDemo.mp4" type="video/mp4">
   </video>
-</figure>
+</figure> -->
+
+<p align="center">
+  <img src="assets/AppDemo.gif" alt="animated" />
+</p>
+
+Note that the terrible frame rate is from the GIF itself rather than the server-client lag. Refer to `assets/AppDemo.mp4` for the original video.
 
 ## Credits
 
