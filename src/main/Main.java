@@ -91,7 +91,7 @@ public class Main {
 			player.setJump(player_pos[2]);
 			
 			for (Integer key : player_pos_hmap.keySet()) {
-				if (key != clientId) {
+				if (!key.equals(clientId)) {
 					if (!playerList.containsKey(key)) {
 						TexturedModel player2Texture = new TexturedModel(OBJLoader.loadObjModel("player",  loader), new ModelTexture(loader.loadTexture("playerTexture")));
 						Player2 player2 = new Player2(player2Texture, new Vector3f(400,0,-400), 0, 180, 0, 1);
