@@ -29,6 +29,6 @@ The client-side should display something like follows:
 
 Note that the terrible frame rate is from the GIF itself rather than the server-client lag. Refer to `assets/AppDemo.mp4` for the original video.
 
-## Credits
+## Footnote & Credits
 
-I wrote this project mainly as a way to learn about OpenGL and socket programming. I obtained the 3D models from [here](https://www.dropbox.com/sh/i76qpo3ug7vvq98/AADQtfO_WsUcU_cEroaqKd9ya?dl=0), and was inspired a lot by [ThinMatrix's online tutorial series](https://www.youtube.com/watch?v=VS8wlS9hF8E&list=PLRIWtICgwaX0u7Rf9zkZhLoLuZVfUksDP).
+I wrote this project mainly as a way to learn about OpenGL and socket programming. I obtained the 3D models from [here](https://www.dropbox.com/sh/i76qpo3ug7vvq98/AADQtfO_WsUcU_cEroaqKd9ya?dl=0), and was inspired a lot by ThinMatrix's online tutorial series, which can be found [here](https://www.youtube.com/watch?v=VS8wlS9hF8E&list=PLRIWtICgwaX0u7Rf9zkZhLoLuZVfUksDP). This project is still a work in progress and I might add more features in the future.
